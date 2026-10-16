@@ -30,6 +30,19 @@ void loop() {
 
 속도를 정해서 움직이려면 `walkFront(속도)`, `walkBack(속도)`, `rollingFront(속도)`, `rollingBack(속도)`를 쓰세요. 속도는 20~200이고 100이 보통 속도입니다. (예: `walkFront(150);`)
 
+## 먼저 할 일: Otto 펌웨어 설치
+
+**보정(로봇 맞추기)을 하려면 보드에 Otto 펌웨어가 먼저 설치되어 있어야 합니다.** 보정은 이 펌웨어가 웹과 통신해서 값을 받아 보드에 저장하기 때문입니다.
+
+1. 크롬(Chrome) 또는 엣지(Edge) 브라우저에서 [i2r.link](https://i2r.link)를 열고 위쪽 메뉴의 **펌웨어**를 누릅니다. (다른 브라우저에서는 동작하지 않습니다.)
+2. ESP32 보드를 **USB로 컴퓨터에 연결**합니다.
+3. 모델 그림 가운데 **otto**를 누르고, 나오는 창에서 보드의 **COM 포트를 선택**한 뒤 설치합니다.
+4. 설치가 끝나면 보드를 WiFi에 연결해서 [i2r.link](https://i2r.link)에 기기로 등록합니다.
+
+설치 방법 영상은 펌웨어 화면 위쪽의 **펌웨어 다운로드 방법** 링크에 있습니다.
+
+> 이 펌웨어를 설치한 뒤에 아래 "보정"을 진행하세요. 내 스케치(예: `walk_front`)는 보정을 끝낸 다음에 올립니다.
+
 ## 보정 (로봇 맞추기)
 
 로봇마다 조립 상태가 달라서 보정이 필요합니다. `ottoInit()`은 보드에 저장된 보정값(다리 수직, 발 속도, 걷기 기울기)을 불러옵니다.
@@ -37,7 +50,7 @@ void loop() {
 
 **순서**
 
-1. 보드에 **Otto 펌웨어**를 설치하고 WiFi에 연결해서 [i2r.link](https://i2r.link)에 기기로 등록합니다. (펌웨어는 i2r.link의 **펌웨어** 메뉴 또는 기기 화면의 [펌웨어 다운로드] 버튼으로 설치합니다.)
+1. 위의 "Otto 펌웨어 설치"를 먼저 끝냅니다. (보드가 WiFi에 연결되어 [i2r.link](https://i2r.link)에 기기로 등록된 상태)
 2. [i2r.link](https://i2r.link)에 로그인해서 내 Otto 기기 화면을 열고, **OTTO 조종 → 로봇 맞추기**를 누릅니다.
 3. 화면의 4단계를 차례로 맞춥니다: 조립 자세 → 다리 수직(90도) → 굴리기 시험(두 발 속도) → 걷기 시험(발을 들 때 기울기).
 4. 마지막에 **[저장 (보드 NVS)]** 을 누릅니다. "보드에 저장된 값이 있습니다"라고 나오면 저장된 것입니다.
@@ -50,7 +63,7 @@ void loop() {
 
 자세한 화면 설명은 [Otto 제작 가이드 3.1](https://github.com/kdi6033/otto/blob/main/docs/guide.md)을 참고하세요.
 
-*English: `ottoInit()` loads the calibration stored on the board. Set it first on the Otto web page (i2r.link → OTTO control → "로봇 맞추기" / robot calibration) and press Save. Without a saved calibration, default values are used.*
+*English: First install the Otto firmware on the board from the i2r.link "펌웨어" (firmware) page (Chrome or Edge, USB connected, choose "otto"). Then `ottoInit()` loads the calibration stored on the board: set it on the Otto web page (i2r.link → OTTO control → "로봇 맞추기" / robot calibration) and press Save. Without a saved calibration, default values are used.*
 
 ## 주요 함수
 
