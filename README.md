@@ -7,6 +7,8 @@
 >
 > *Everything here, the library and the Otto robot firmware and apps, was developed with a generative AI (Claude). You can do the same: give a generative AI (Claude, Gemini, ChatGPT, ...) the address of this repository and tell it what you want the robot to do, and it reads the examples and the library and writes the program for you.*
 
+<img src="extras/otto-photo.png" alt="Otto I2R robot" height="320">
+
 Otto 로봇(YL, YR, RL, RR 서보 4개)을 위한 Arduino 라이브러리입니다. 보드는 [i2r-05](https://github.com/kdi6033/i2r-05)(ESP32-S3)입니다.
 핀 번호, 서보 초기화, 각도 보정, 걷기와 굴리기 같은 기본 동작이 들어 있습니다.
 
