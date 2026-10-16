@@ -30,13 +30,27 @@ void loop() {
 
 속도를 정해서 움직이려면 `walkFront(속도)`, `walkBack(속도)`, `rollingFront(속도)`, `rollingBack(속도)`를 쓰세요. 속도는 20~200이고 100이 보통 속도입니다. (예: `walkFront(150);`)
 
-## 보정
+## 보정 (로봇 맞추기)
 
-로봇마다 조립 상태가 달라서 보정이 필요합니다. 웹의 **OTTO 조종 → 로봇 맞추기**에서 맞추고 **저장**하면 보드에 기록되고,
-`ottoInit()`이 그 값을 불러옵니다.
+로봇마다 조립 상태가 달라서 보정이 필요합니다. `ottoInit()`은 보드에 저장된 보정값(다리 수직, 발 속도, 걷기 기울기)을 불러옵니다.
+**이 값은 [i2r.link](https://i2r.link) 웹에서 "로봇 맞추기"를 하고 [저장]을 눌러야 보드에 기록됩니다.** 저장하지 않으면 `ottoInit()`은 기본값을 씁니다.
+
+**순서**
+
+1. 보드에 **Otto 펌웨어**를 설치하고 WiFi에 연결해서 [i2r.link](https://i2r.link)에 기기로 등록합니다. (펌웨어는 i2r.link의 **펌웨어** 메뉴 또는 기기 화면의 [펌웨어 다운로드] 버튼으로 설치합니다.)
+2. [i2r.link](https://i2r.link)에 로그인해서 내 Otto 기기 화면을 열고, **OTTO 조종 → 로봇 맞추기**를 누릅니다.
+3. 화면의 4단계를 차례로 맞춥니다: 조립 자세 → 다리 수직(90도) → 굴리기 시험(두 발 속도) → 걷기 시험(발을 들 때 기울기).
+4. 마지막에 **[저장 (보드 NVS)]** 을 누릅니다. "보드에 저장된 값이 있습니다"라고 나오면 저장된 것입니다.
+5. 이제 Arduino IDE로 내 스케치(예: `walk_front`)를 올리면, `ottoInit()`이 방금 저장한 값을 불러와서 로봇에 맞게 움직입니다.
 
 > 아직 저장하지 않은 보드는 기본값(YL 1250, YR 1450, 기울기 20/23, 속도 450/550)으로 움직입니다.
 > 이 값은 한 대의 로봇에서 실측한 값이라 로봇에 따라 안 맞을 수 있으니, 먼저 [로봇 맞추기]를 하세요.
+>
+> 웹에서 펌웨어를 다시 설치하면 보드의 저장값이 지워집니다. 그때는 [로봇 맞추기]를 다시 하세요. ([값 복사]로 값을 적어 두면 편합니다.)
+
+자세한 화면 설명은 [Otto 제작 가이드 3.1](https://github.com/kdi6033/otto/blob/main/docs/guide.md)을 참고하세요.
+
+*English: `ottoInit()` loads the calibration stored on the board. Set it first on the Otto web page (i2r.link → OTTO control → "로봇 맞추기" / robot calibration) and press Save. Without a saved calibration, default values are used.*
 
 ## 주요 함수
 
