@@ -17,7 +17,12 @@
 Otto 로봇(YL, YR, RL, RR 서보 4개)을 위한 Arduino 라이브러리입니다. 보드는 [i2r-05](https://github.com/kdi6033/i2r-05)(ESP32-S3)입니다.
 핀 번호, 서보 초기화, 각도 보정, 걷기와 굴리기 같은 기본 동작이 들어 있습니다.
 
-- 제작 가이드와 통신 규격: https://github.com/kdi6033/otto
+| 문서 | 내용 |
+|---|---|
+| [docs/guide.md](https://github.com/kdi6033/otto/blob/main/docs/guide.md) | 제작 가이드: 서보 이름과 핀, 로봇 맞추기, 걷기, 굴리기, 춤, OLED, LED, 센서 |
+| [docs/protocol.md](https://github.com/kdi6033/otto/blob/main/docs/protocol.md) | 통신 프로토콜 v1.0 (초안): MQTT, BLE, 동작 명령, LLM 대화 |
+
+두 문서는 [kdi6033/otto](https://github.com/kdi6033/otto) 저장소에 있습니다.
 
 ## 설치
 
