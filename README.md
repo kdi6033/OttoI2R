@@ -102,7 +102,7 @@ void loop() {
 | 굴리기 | `rollingFront()`, `rollingFront(속도)`, `rollingBack()`, `rollingBack(속도)`, `rollingLeft()`, `rollingRight()` |
 | 자세와 발 | `moveHip(yr, yl)`, `rollRightFoot(속도)`, `rollLeftFoot(속도)`, `ottoRollFeet(rr, rl)` |
 | 춤 | `danceRightRightTurn()` |
-| 보정값 | `ottoLoadCalibration()`, `ottoSaveCalibration()`, `ottoClearCalibration()`, `ottoHasSavedCalibration()`, `ottoGetCalibration()`, `ottoSetCalibration()`, `ottoSetHipCenter()`, `ottoSetTilt()`, `ottoSetSpeed()` |
+| 보정값 | `ottoLoadCalibration()`, `ottoSaveCalibration()`, `ottoClearCalibration()`, `ottoHasSavedCalibration()`, `ottoGetCalibration()`, `ottoSetCalibration(yl, yr, tiltR, tiltL, rl, rr)`, `ottoSetHipCenter(yl, yr)`, `ottoSetTilt(tiltR, tiltL)`, `ottoSetSpeed(rl, rr)` |
 
 - `ottoInit()`: 서보를 움직이지 않고 보정값만 불러오려면 `ottoLoadCalibration()`을 쓰세요.
 - `ottoInit(yl, yr)`: 다리 중심값을 직접 넘기는 방식입니다. (저장된 값은 불러오지 않음)
