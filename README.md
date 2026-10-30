@@ -83,12 +83,7 @@ void loop() {
 4. 마지막에 **[저장 (보드 NVS)]** 을 누릅니다. "보드에 저장된 값이 있습니다"라고 나오면 저장된 것입니다.
 5. 이제 Arduino IDE로 내 스케치(예: `walk_front`)를 올리면, `ottoInit()`이 방금 저장한 값을 불러와서 로봇에 맞게 움직입니다.
 
-> 아직 저장하지 않은 보드는 기본값(YL 1250, YR 1450, 기울기 20/23, 속도 450/550)으로 움직입니다.
-> 이 값은 한 대의 로봇에서 실측한 값이라 로봇에 따라 안 맞을 수 있으니, 먼저 [로봇 맞추기]를 하세요.
->
-> 웹에서 펌웨어를 다시 설치하면 보드의 저장값이 지워집니다. 그때는 [로봇 맞추기]를 다시 하세요. ([값 복사]로 값을 적어 두면 편합니다.)
-
-자세한 화면 설명은 [Otto 제작 가이드 3.1](https://github.com/kdi6033/otto/blob/main/docs/guide.md)을 참고하세요.
+보정 변수(6개)의 뜻과 범위, 기본값, 코드에서 값을 넣는 함수 등 자세한 내용은 [Otto 제작 가이드 "3. 조립 후 모터 동작 확인과 초기셋"](https://github.com/kdi6033/otto/blob/main/docs/guide.md#-3-%EC%A1%B0%EB%A6%BD-%ED%9B%84-%EB%AA%A8%ED%84%B0-%EB%8F%99%EC%9E%91-%ED%99%95%EC%9D%B8%EA%B3%BC-%EC%B4%88%EA%B8%B0%EC%85%8B)를 참조하세요.
 
 *English: First install the Otto firmware on the board from the i2r.link "펌웨어" (firmware) page (Chrome or Edge, USB connected, choose "otto"). Then `ottoInit()` loads the calibration stored on the board: set it on the Otto web page (i2r.link → OTTO control → "로봇 맞추기" / robot calibration) and press Save. Without a saved calibration, default values are used.*
 
