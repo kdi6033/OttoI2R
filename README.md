@@ -32,6 +32,8 @@ Otto 로봇(YL, YR, RL, RR 서보 4개)을 위한 Arduino 라이브러리입니�
 2. 검색창에 `OttoI2R`을 입력합니다.
 3. **OttoI2R by i2r**의 **INSTALL**을 누릅니다. 설치되면 `1.0.0 installed`로 바뀝니다.
 
+<img src="extras/otto-arduino-lib.png" alt="Arduino IDE 라이브러리 관리자에서 OttoI2R 설치" width="300">
+
 **방법 2. ZIP 파일로 설치** (라이브러리 관리자에서 찾을 수 없을 때)
 
 1. 이 페이지 위쪽의 초록색 **Code** 버튼 → **Download ZIP**을 눌러 ZIP 파일을 내려받습니다. (GitHub에 로그인하지 않아도 됩니다)
