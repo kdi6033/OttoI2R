@@ -30,7 +30,7 @@ Otto 로봇(YL, YR, RL, RR 서보 4개)을 위한 Arduino 라이브러리입니�
 
 1. Arduino IDE 왼쪽의 **라이브러리 관리자**(책 모양 아이콘)를 엽니다. (또는 **스케치 → 라이브러리 포함하기 → 라이브러리 관리**)
 2. 검색창에 `OttoI2R`을 입력합니다.
-3. **OttoI2R by i2r**의 **INSTALL**을 누릅니다. 설치되면 `1.0.0 installed`로 바뀝니다.
+3. **OttoI2R by i2r**의 **INSTALL**을 누릅니다. 설치되면 `1.1.0 installed`로 바뀝니다.
 
 <img src="extras/otto-arduino-lib.png" alt="Arduino IDE 라이브러리 관리자에서 OttoI2R 설치" width="300">
 
@@ -58,7 +58,7 @@ void loop() {
 }
 ```
 
-예제는 **파일 → 예제 → OttoI2R**에 있습니다. (walk, walk_front_speed, walk_back_speed, slide, rolling, rolling_front_speed, rolling_back_speed, hip_move, roll_one_foot)
+예제는 **파일 → 예제 → OttoI2R**에 있습니다. (walk, walk_front_speed, walk_back_speed, slide, rolling, rolling_front_speed, rolling_back_speed, hip_move, roll_one_foot, dance)
 
 속도를 정해서 움직이려면 `walkFront(속도)`, `walkBack(속도)`, `rollingFront(속도)`, `rollingBack(속도)`를 쓰세요. 속도는 20~200이고 100이 보통 속도입니다. (예: `walkFront(150);`)
 
@@ -103,14 +103,19 @@ void loop() {
 | 미끄러지기 | `slideFront()`, `slideBack()`, `slideLeft()`, `slideRight()` |
 | 굴리기 | `rollingFront()`, `rollingFront(속도)`, `rollingBack()`, `rollingBack(속도)`, `rollingLeft()`, `rollingRight()` |
 | 자세와 발 | `moveHip(yr, yl)`, `rollRightFoot(속도)`, `rollLeftFoot(속도)`, `ottoRollFeet(rr, rl)` |
-| 춤 | `danceRightRightTurn()` |
+| 춤 | `dance()`, `setDanceTilts(129, 129, 49, 49)` |
 | 보정값 | `ottoLoadCalibration()`, `ottoSaveCalibration()`, `ottoClearCalibration()`, `ottoHasSavedCalibration()`, `ottoGetCalibration()`, `ottoSetCalibration(yl, yr, tiltR, tiltL, rl, rr)`, `ottoSetHipCenter(yl, yr)`, `ottoSetTilt(tiltR, tiltL)`, `ottoSetSpeed(rl, rr)` |
 
 - `ottoInit()`: 서보를 움직이지 않고 보정값만 불러오려면 `ottoLoadCalibration()`을 쓰세요.
 - `ottoInit(yl, yr)`: 다리 중심값을 직접 넘기는 방식입니다. (저장된 값은 불러오지 않음)
 - `walkFront(속도)`, `walkBack(속도)`, `rollingFront(속도)`, `rollingBack(속도)`: 속도는 20~200(%)입니다. 100이 보정한 기본 속도이고, 100을 넘으면 보폭은 그대로 두고 기다리는 시간만 줄여서 걸음을 빠르게 합니다.
+- `dance()`: 한 발로 서서 반대쪽 발을 굴려 좌회전/우회전하는 춤 한 바퀴. `loop()` 에서 계속 부릅니다.
+- `setDanceTilts(rYr, rYl, lYr, lYl)` (예: `setDanceTilts(129, 129, 49, 49)`): `dance()` 에서 한 발로 설 때 엉덩이 각도 4개를 정하고 보드(NVS)에 자동 저장합니다. 왼발 서기는 90보다 큰 값, 오른발 서기는 90보다 작은 값입니다. 같은 값이면 다시 쓰지 않아서 `setup()` 에서 매번 불러도 됩니다. 저장한 값은 `ottoInit()` 이 불러오고, 저장한 적이 없으면 기본값(129, 129, 51, 55)을 씁니다. (위 예의 49는 YL 안전 범위에 맞춰 55로 보정됩니다.) 예제는 `dance`.
+- 엉덩이(YR, YL)는 모든 동작에서 안전 범위(YR 0~135, YL 55~180)로 자동 보정됩니다. 범위를 넘으면 모터에 무리가 갑니다.
 - 걷는 속도와 보폭 같은 고정값은 `src/OttoI2R.cpp`에 있습니다.
 
 ## 버전
 
 1.0.0: 첫 배포.
+
+1.1.0: `dance()`, `setDanceTilts()` 추가(보정값 NVS 자동 저장), `dance` 예제 추가, 엉덩이 안전 범위 자동 보정(YR 0~135, YL 55~180). `danceRightRightTurn()` 삭제.

@@ -25,8 +25,13 @@ rollingFront	KEYWORD2
 rollingBack	KEYWORD2
 rollingRight	KEYWORD2
 rollingLeft	KEYWORD2
-danceRightRightTurn	KEYWORD2
 ottoRollFeet	KEYWORD2
 moveHip	KEYWORD2
 rollRightFoot	KEYWORD2
 rollLeftFoot	KEYWORD2
+dance	KEYWORD2
+setDanceTilts	KEYWORD2
+applyDanceTilts	KEYWORD2
+getDanceTilts	KEYWORD2
+saveDanceTilts	KEYWORD2
+clearDanceTilts	KEYWORD2

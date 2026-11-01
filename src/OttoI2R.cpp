@@ -76,11 +76,19 @@ static int angleToPulse(int angle, int pulseCenter) {
 // 다른 동작이 엉덩이를 움직이면 writeYL/writeYR이 false로 되돌려서, 다음 rolling 때 다시 돌린다.
 static bool s_hipsAtEnds = false;
 
+// 엉덩이 서보의 안전 각도 범위. 이 범위를 벗어나면 서보에 물리적으로 무리가 가서 망가질 수 있다.
+// 엉덩이를 움직이는 모든 동작이 writeYR/writeYL 을 거치므로 여기서 한 번에 막는다.
+//   YR(오른쪽) 0~135, YL(왼쪽) 55~180. 벗어난 값은 가장 가까운 한계로 자동 보정한다.
+static const int YR_ANGLE_MIN = 0,  YR_ANGLE_MAX = 135;
+static const int YL_ANGLE_MIN = 55, YL_ANGLE_MAX = 180;
+
 void writeYL(int angle) {
+  angle = constrain(angle, YL_ANGLE_MIN, YL_ANGLE_MAX);
   s_hipsAtEnds = false;
   servoYL.writeMicroseconds(angleToPulse(angle, s_ylPulseCenter));
 }
 void writeYR(int angle) {
+  angle = constrain(angle, YR_ANGLE_MIN, YR_ANGLE_MAX);
   s_hipsAtEnds = false;
   servoYR.writeMicroseconds(angleToPulse(angle, s_yrPulseCenter));
 }
@@ -192,9 +200,11 @@ bool ottoLoadCalibration() {
 
 // 인자 없는 초기화: 보드에 저장된 보정값이 있으면 불러온 뒤(없으면 기본값) 서보를 초기화한다.
 // 두 번 불러도 처음 한 번만 동작한다. 값을 먼저 불러온 뒤 서보를 붙이므로 다리가 두 번 움직이지 않는다.
+static void danceLoadTilts();
 void ottoInit() {
   if (s_walkStarted) return;
   ottoLoadCalibration();
+  danceLoadTilts();
   ottoInit(s_ylCenterCfg, s_yrCenterCfg);
   s_walkStarted = true;
 }
@@ -858,62 +868,6 @@ void rollingLeft() {
 }
 
 // ---------------------------------------------------------------
-// 오른발 지지, 왼발 들고 오른쪽으로 돌기 (춤 동작)
-// 순서: 왼쪽 엉덩이(YL)를 기울여 왼발을 든다 -> 땅에 디딘 오른발(RR)을 굴려 오른쪽으로 돈다 -> 왼발을 내려놓는다.
-// 오른쪽 엉덩이(YR)는 90도에 고정하고, 왼발(RL)은 들린 채로 둔다.
-// ---------------------------------------------------------------
-void danceRightRightTurn() {
-  const int rampMs = 120;      // 왼쪽 다리를 옮기는 시간
-  const int rampSteps = 12;    // 다리를 나눠서 옮기는 단계 수
-  const int rollMs = 200;      // 왼발을 굴리는 시간
-  const int pauseMs = 300;     // 왼발을 내려놓은 뒤 멈추는 시간
-  static int s_danceYL = NEUTRAL;  // 현재 왼쪽 다리 각도
-  static int s_danceYR = NEUTRAL;  // 현재 오른쪽 다리 각도
-
-  ensureFeetReady();  // 처음 한 번 서보를 준비한다
-
-  int rrSpeedUs = s_rrSpeedUs;
-
-  // 0) 오른쪽 다리를 기울여 몸무게를 오른발 위로 옮긴다 (한 발로 서기 위한 준비)
-  int shiftTargetR = NEUTRAL - s_tiltOffsetR;
-  for (int i = 1; i <= rampSteps; i++) {
-    writeYR(s_danceYR + (shiftTargetR - s_danceYR) * i / rampSteps);
-    delay(rampMs / rampSteps);
-  }
-  s_danceYR = shiftTargetR;
-
-  // 1) 왼쪽 다리를 기울여 왼발을 든다
-  int liftTarget = NEUTRAL - s_tiltOffsetL;
-  for (int i = 1; i <= rampSteps; i++) {
-    writeYL(s_danceYL + (liftTarget - s_danceYL) * i / rampSteps);
-    delay(rampMs / rampSteps);
-  }
-  s_danceYL = liftTarget;
-
-  // 2) 땅에 디딘 오른발을 굴려 오른쪽으로 돈다 (왼발은 들린 채로 둔다)
-  servoRR.writeMicroseconds(RR_STOP_US + rrSpeedUs);
-  delay(rollMs);
-  servoRR.writeMicroseconds(RR_STOP_US);
-
-  // 3) 왼쪽 다리를 90도로 되돌려 왼발을 내려놓는다
-  for (int i = 1; i <= rampSteps; i++) {
-    writeYL(s_danceYL + (NEUTRAL - s_danceYL) * i / rampSteps);
-    delay(rampMs / rampSteps);
-  }
-  s_danceYL = NEUTRAL;
-  s_curYL = NEUTRAL;
-
-  // 4) 오른쪽 다리를 90도로 되돌린다
-  for (int i = 1; i <= rampSteps; i++) {
-    writeYR(s_danceYR + (NEUTRAL - s_danceYR) * i / rampSteps);
-    delay(rampMs / rampSteps);
-  }
-  s_danceYR = NEUTRAL;
-  s_curYR = NEUTRAL;
-  delay(pauseMs);
-}
-
-// ---------------------------------------------------------------
 // 발(RL, RR) 속도 지정 - 스케치는 서보 객체나 attach를 다루지 않는다
 // rr: 오른발 속도, rl: 왼발 속도. 양수 = 앞으로, 음수 = 뒤로, 0 = 멈춤. (-400 ~ 400)
 // ---------------------------------------------------------------
@@ -956,4 +910,95 @@ void rollLeftFoot(int speed) {
   ensureFeetReady();
   speed = constrain(speed, -400, 400);
   servoRL.writeMicroseconds(RL_STOP_US + speed);   // 왼발: 양수 = 앞으로
+}
+
+// ---------------------------------------------------------------
+// 댄스 (한 발로 서서 반대쪽 발을 굴려 좌회전/우회전)
+// 엉덩이 각도 4개는 NVS(DANCE_NS)에 저장해 두고 ottoInit() 때 불러온다.
+// ---------------------------------------------------------------
+static const char *DANCE_NS = "ottodance";
+static const int DANCE_SPEED = 300;  // 발 속도 (균형이 깨지면 낮춘다)
+static int s_danceRYr = 129;  // 왼발로 서기: 오른쪽 엉덩이
+static int s_danceRYl = 129;  // 왼발로 서기: 왼쪽 엉덩이
+static int s_danceLYr = 51;   // 오른발로 서기:   오른쪽 엉덩이
+static int s_danceLYl = 55;   // 오른발로 서기:   왼쪽 엉덩이
+static bool s_danceLoaded = false;
+
+static void danceLoadTilts() {
+  s_danceLoaded = true;
+  Preferences p;
+  if (!p.begin(DANCE_NS, true)) return;
+  if (p.getUChar("ok", 0) == 1) {
+    s_danceRYr = constrain(p.getInt("ryr", s_danceRYr), YR_ANGLE_MIN, YR_ANGLE_MAX);
+    s_danceRYl = constrain(p.getInt("ryl", s_danceRYl), YL_ANGLE_MIN, YL_ANGLE_MAX);
+    s_danceLYr = constrain(p.getInt("lyr", s_danceLYr), YR_ANGLE_MIN, YR_ANGLE_MAX);
+    s_danceLYl = constrain(p.getInt("lyl", s_danceLYl), YL_ANGLE_MIN, YL_ANGLE_MAX);
+  }
+  p.end();
+}
+
+// 값만 바꾼다. NVS 에는 쓰지 않는다. (웹에서 슬라이더를 움직이는 동안처럼 자주 바꿀 때 쓴다)
+void applyDanceTilts(int rYr, int rYl, int lYr, int lYl) {
+  if (!s_danceLoaded) danceLoadTilts();
+  s_danceRYr = constrain(rYr, YR_ANGLE_MIN, YR_ANGLE_MAX);
+  s_danceRYl = constrain(rYl, YL_ANGLE_MIN, YL_ANGLE_MAX);
+  s_danceLYr = constrain(lYr, YR_ANGLE_MIN, YR_ANGLE_MAX);
+  s_danceLYl = constrain(lYl, YL_ANGLE_MIN, YL_ANGLE_MAX);
+}
+
+void getDanceTilts(int &rYr, int &rYl, int &lYr, int &lYl) {
+  if (!s_danceLoaded) danceLoadTilts();
+  rYr = s_danceRYr; rYl = s_danceRYl; lYr = s_danceLYr; lYl = s_danceLYl;
+}
+
+bool saveDanceTilts() {
+  if (!s_danceLoaded) danceLoadTilts();
+  Preferences p;
+  if (!p.begin(DANCE_NS, false)) return false;
+  // 이미 같은 값이 저장돼 있으면 플래시를 쓰지 않는다 (부팅마다 불러도 마모되지 않는다)
+  bool same = p.getUChar("ok", 0) == 1 &&
+              p.getInt("ryr", -1) == s_danceRYr && p.getInt("ryl", -1) == s_danceRYl &&
+              p.getInt("lyr", -1) == s_danceLYr && p.getInt("lyl", -1) == s_danceLYl;
+  size_t n = 1;
+  if (!same) {
+    n = p.putInt("ryr", s_danceRYr);
+    n += p.putInt("ryl", s_danceRYl);
+    n += p.putInt("lyr", s_danceLYr);
+    n += p.putInt("lyl", s_danceLYl);
+    n += p.putUChar("ok", 1);
+  }
+  p.end();
+  return n > 0;
+}
+
+void setDanceTilts(int rYr, int rYl, int lYr, int lYl) {
+  applyDanceTilts(rYr, rYl, lYr, lYl);
+  saveDanceTilts();
+}
+
+void clearDanceTilts() {
+  Preferences p;
+  if (p.begin(DANCE_NS, false)) {
+    p.clear();
+    p.end();
+  }
+  s_danceRYr = 129; s_danceRYl = 129; s_danceLYr = 51; s_danceLYl = 55;
+  s_danceLoaded = true;
+}
+
+void dance() {
+  if (!s_danceLoaded) danceLoadTilts();
+  moveHip(90, 90);                      delay(700);    // 가운데
+  moveHip(s_danceRYr, s_danceRYl);      delay(700);    // 왼발 딛기 (오른발 듦)
+  rollLeftFoot(-DANCE_SPEED);           delay(1000);   // 좌회전
+  rollLeftFoot(0);                      delay(300);    // 멈춤
+  rollLeftFoot(DANCE_SPEED);            delay(1000);   // 우회전
+  rollLeftFoot(0);                      delay(300);    // 멈춤
+
+  moveHip(90, 90);                      delay(700);    // 가운데
+  moveHip(s_danceLYr, s_danceLYl);      delay(700);    // 오른발 딛기 (왼발 듦)
+  rollRightFoot(DANCE_SPEED);           delay(1000);   // 좌회전
+  rollRightFoot(0);                     delay(300);    // 멈춤
+  rollRightFoot(-DANCE_SPEED);          delay(1000);   // 우회전
+  rollRightFoot(0);                     delay(300);    // 멈춤
 }
