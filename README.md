@@ -24,7 +24,7 @@ Otto 로봇(YL, YR, RL, RR 서보 4개)을 위한 Arduino 라이브러리입니�
 
 두 문서는 [kdi6033/otto](https://github.com/kdi6033/otto) 저장소에 있습니다.
 
-## 설치
+## ✅ 설치
 
 **방법 1. Arduino IDE 라이브러리 관리자 (권장)**
 
@@ -44,7 +44,7 @@ Otto 로봇(YL, YR, RL, RR 서보 4개)을 위한 Arduino 라이브러리입니�
 - **추가로 설치할 라이브러리는 없습니다.** 서보는 ESP32 기본 PWM(LEDC)으로 직접 구동합니다.
 - **ESP32 보드 패키지 3.0 이상**이 필요합니다. (보드 매니저에서 `esp32 by Espressif Systems` 3.x 설치)
 
-## 사용
+## ✅ 사용
 
 ```cpp
 #include <OttoI2R.h>
@@ -62,7 +62,7 @@ void loop() {
 
 속도를 정해서 움직이려면 `walkFront(속도)`, `walkBack(속도)`, `rollingFront(속도)`, `rollingBack(속도)`를 쓰세요. 속도는 20~200이고 100이 보통 속도입니다. (예: `walkFront(150);`)
 
-## 먼저 할 일: Otto 펌웨어 설치
+## ✅ 먼저 할 일: Otto 펌웨어 설치
 
 📺 **펌웨어 설치 방법은 유튜브 영상에 자세히 설명했습니다. 먼저 영상을 보세요: https://youtu.be/L9_3SZdu6Dk**
 
@@ -77,7 +77,7 @@ void loop() {
 
 > 이 펌웨어를 설치한 뒤에 아래 "보정"을 진행하세요. 내 스케치(예: `walk_front`)는 보정을 끝낸 다음에 올립니다.
 
-## 보정 (로봇 맞추기)
+## ✅ 보정 (로봇 맞추기)
 
 로봇마다 조립 상태가 달라서 보정이 필요합니다. `ottoInit()`은 보드에 저장된 보정값(다리 수직, 발 속도, 걷기 기울기)을 불러옵니다.
 **이 값은 [i2r.link](https://i2r.link) 웹에서 "로봇 맞추기"를 하고 [저장]을 눌러야 보드에 기록됩니다.** 저장하지 않으면 `ottoInit()`은 기본값을 씁니다.
@@ -94,7 +94,7 @@ void loop() {
 
 *English: First install the Otto firmware on the board from the i2r.link "펌웨어" (firmware) page (Chrome or Edge, USB connected, choose "otto"). Then `ottoInit()` loads the calibration stored on the board: set it on the Otto web page (i2r.link → OTTO control → "로봇 맞추기" / robot calibration) and press Save. Without a saved calibration, default values are used.*
 
-## 주요 함수
+## ✅ 주요 함수
 
 | 구분 | 함수 |
 |---|---|
@@ -114,7 +114,7 @@ void loop() {
 - 엉덩이(YR, YL)는 모든 동작에서 안전 범위(YR 0~135, YL 55~180)로 자동 보정됩니다. 범위를 넘으면 모터에 무리가 갑니다.
 - 걷는 속도와 보폭 같은 고정값은 `src/OttoI2R.cpp`에 있습니다.
 
-## 버전
+## ✅ 버전
 
 1.0.0: 첫 배포.
 
